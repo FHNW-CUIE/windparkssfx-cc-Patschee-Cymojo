@@ -2,7 +2,8 @@
 
 === Bearbeitet von
 
-* _Vorname Nachname_
+* Cyrill Lindenmann
+* Patrick Schmid
 
 === Integriert in die OOP2-Projekte von
 
