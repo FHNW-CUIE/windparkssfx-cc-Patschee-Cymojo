@@ -1,7 +1,5 @@
 package cuie.project.infinite_roll_selection;
 
-import java.util.ArrayList;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,13 +8,18 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
+
 public class Infinite_roll_selection extends Control {
 
     private ArrayList<String> values;
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty index = new SimpleIntegerProperty();
+    private final StringProperty prevText = new SimpleStringProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
+    private final StringProperty nextText = new SimpleStringProperty();
+    private final StringProperty tempText = new SimpleStringProperty();
 
     public Infinite_roll_selection(ArrayList<String> values) {
         this.values = values;
@@ -36,6 +39,18 @@ public class Infinite_roll_selection extends Control {
             newValue = 0;
         }
 
+        if(values.size() > 2 ) {
+            if (newValue + 2 == values.size()) {
+                setTempText(values.get(0));
+            } else if (newValue + 2 > values.size()) {
+                setTempText(values.get(1));
+            } else {
+                setTempText(values.get(newValue));
+            }
+        } else {
+            setTempText(values.get(newValue));
+        }
+
         setIndex(newValue);
     }
 
@@ -44,6 +59,18 @@ public class Infinite_roll_selection extends Control {
 
         if (newValue < 0) {
             newValue = values.size() - 1;
+        }
+
+        if(values.size() > 2 ) {
+            if (newValue - 2 == -1) {
+                setTempText(values.get(values.size()-1));
+            } else if (newValue - 2 < -1) {
+                setTempText(values.get(values.size()-2));
+            } else {
+                setTempText(values.get(newValue));
+            }
+        } else {
+            setTempText(values.get(newValue));
         }
 
         setIndex(newValue);
@@ -55,7 +82,25 @@ public class Infinite_roll_selection extends Control {
 
     //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
-        index.addListener((observable, oldValue, newValue) -> setUserFacingText(values.get(newValue.intValue())));
+        index.addListener((observable, oldValue, newValue) -> setAllTexts(newValue.intValue()));
+    }
+
+    public void setAllTexts(int newValue) {
+        //Auswahl anpassen
+        setUserFacingText(values.get(newValue));
+        //prev und next Text anpassen:
+        if (newValue == 0) {
+            setPrevText(values.get(values.size() - 1));
+            setNextText(values.get(newValue + 1));
+        }
+        if (newValue == values.size() - 1) {
+            setPrevText(values.get(newValue - 1));
+            setNextText(values.get(0));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
     }
 
     //todo: Forgiving Format implementieren
@@ -102,6 +147,42 @@ public class Infinite_roll_selection extends Control {
 
     public void setUserFacingText(String userFacingText) {
         this.userFacingText.set(userFacingText);
+    }
+
+    public String getPrevText() {
+        return prevText.get();
+    }
+
+    public StringProperty prevTextProperty() {
+        return prevText;
+    }
+
+    public void setPrevText(String prevText) {
+        this.prevText.set(prevText);
+    }
+
+    public String getNextText() {
+        return nextText.get();
+    }
+
+    public StringProperty nextTextProperty() {
+        return nextText;
+    }
+
+    public void setNextText(String nextText) {
+        this.nextText.set(nextText);
+    }
+
+    public String getTempText() {
+        return tempText.get();
+    }
+
+    public StringProperty tempTextProperty() {
+        return tempText;
+    }
+
+    public void setTempText(String tempText) {
+        this.tempText.set(tempText);
     }
 
 }
