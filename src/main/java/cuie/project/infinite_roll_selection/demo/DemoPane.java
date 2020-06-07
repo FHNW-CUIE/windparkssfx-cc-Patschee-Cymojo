@@ -1,23 +1,18 @@
 package cuie.project.infinite_roll_selection.demo;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import cuie.project.infinite_roll_selection.infinite_roll_selection;
+import cuie.project.infinite_roll_selection.Infinite_roll_selection;
 
 class DemoPane extends BorderPane {
-    private infinite_roll_selection infiniterollselection;
+    private Infinite_roll_selection infiniterollselection;
 
-    private Slider ageSlider;
-
-    private CheckBox  readOnlyBox;
-    private CheckBox  mandatoryBox;
-    private TextField labelField;
+    private Slider indexSlider;
+    private Label indexLabel;
 
     private PresentationModel model;
 
@@ -33,27 +28,19 @@ class DemoPane extends BorderPane {
     private void initializeControls() {
         setPadding(new Insets(10));
 
-        infiniterollselection = new infinite_roll_selection();
+        infiniterollselection = new Infinite_roll_selection();
 
-        ageSlider = new Slider(0, 130, 0);
-
-        readOnlyBox = new CheckBox();
-        readOnlyBox.setSelected(false);
-
-        mandatoryBox = new CheckBox();
-        mandatoryBox.setSelected(true);
-
-        labelField = new TextField();
+        // Todo: max value zu array length machen
+        indexSlider = new Slider(0, 5, 0);
+        indexLabel = new Label();
     }
 
     private void layoutControls() {
         setCenter(infiniterollselection);
         VBox box = new VBox(10,
                             new Label("Business Control Properties"),
-                            new Label("Age")      , ageSlider,
-                            new Label("readOnly") , readOnlyBox,
-                            new Label("mandatory"), mandatoryBox,
-                            new Label("Label")    , labelField);
+                           indexLabel,
+                            new Label("Index")      , indexSlider);
         box.setPadding(new Insets(10));
         box.setSpacing(10);
         setRight(box);
@@ -63,15 +50,13 @@ class DemoPane extends BorderPane {
     }
 
     private void setupBindings() {
-        ageSlider.valueProperty()      .bindBidirectional(model.ageProperty());
-        labelField.textProperty()      .bindBidirectional(model.age_LabelProperty());
-        readOnlyBox.selectedProperty() .bindBidirectional(model.age_readOnlyProperty());
-        mandatoryBox.selectedProperty().bindBidirectional(model.age_mandatoryProperty());
+        indexLabel.textProperty().bind(model.selectedIndexProperty().asString());
 
-        infiniterollselection.valueProperty()    .bindBidirectional(model.ageProperty());
-        infiniterollselection.labelProperty()    .bind(model.age_LabelProperty());
-        infiniterollselection.readOnlyProperty() .bind(model.age_readOnlyProperty());
-        infiniterollselection.mandatoryProperty().bind(model.age_mandatoryProperty());
+        indexSlider.valueProperty()      .bindBidirectional(model.selectedIndexProperty());
+
+        infiniterollselection.valueProperty()    .bindBidirectional(model.selectedIndexProperty());
+
+
     }
 
 }

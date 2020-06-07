@@ -22,7 +22,7 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 
 //todo: durch eigenen Skin ersetzen
-class BusinessSkin extends SkinBase<infinite_roll_selection> {
+class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private static final int IMG_SIZE   = 12;
     private static final int IMG_OFFSET = 4;
 
@@ -50,16 +50,13 @@ class BusinessSkin extends SkinBase<infinite_roll_selection> {
     // all parts
     private TextField editableNode;
     private Label     readOnlyNode;
-    private Popup     popup;
-    private Pane      dropDownChooser;
-    private Button    chooserButton;
 
     private StackPane drawingPane;
 
     private Animation      invalidInputAnimation;
     private FadeTransition fadeOutValidIconAnimation;
 
-    BusinessSkin(infinite_roll_selection control) {
+    BusinessSkin(Infinite_roll_selection control) {
         super(control);
         initializeSelf();
         initializeParts();
@@ -84,21 +81,11 @@ class BusinessSkin extends SkinBase<infinite_roll_selection> {
 
         State.VALID.imageView.setOpacity(0.0);
 
-        chooserButton = new Button(ANGLE_DOWN);
-        chooserButton.getStyleClass().add("chooser-button");
-
-        dropDownChooser = new DropDownChooser(getSkinnable());
-
-        popup = new Popup();
-        popup.getContent().addAll(dropDownChooser);
-
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
     }
 
     private void layoutParts() {
-        StackPane.setAlignment(chooserButton, Pos.CENTER_RIGHT);
-        drawingPane.getChildren().addAll(editableNode, chooserButton, readOnlyNode);
 
         Arrays.stream(State.values())
               .map(state -> state.imageView)
@@ -141,31 +128,8 @@ class BusinessSkin extends SkinBase<infinite_roll_selection> {
     }
 
     private void setupEventHandlers() {
-        chooserButton.setOnAction(event -> {
-            if (popup.isShowing()) {
-                popup.hide();
-            } else {
-                popup.show(editableNode.getScene().getWindow());
-            }
-        });
-
-        popup.setOnHidden(event -> chooserButton.setText(ANGLE_DOWN));
-
-        popup.setOnShown(event -> {
-            chooserButton.setText(ANGLE_UP);
-            Point2D location = editableNode.localToScreen(editableNode.getWidth() - dropDownChooser.getPrefWidth() - 3,
-                                                          editableNode.getHeight() -3);
-
-            popup.setX(location.getX());
-            popup.setY(location.getY());
-        });
-
         editableNode.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case ESCAPE:
-                    getSkinnable().reset();
-                    event.consume();
-                    break;
                 case UP:
                     getSkinnable().increase();
                     event.consume();
@@ -179,27 +143,9 @@ class BusinessSkin extends SkinBase<infinite_roll_selection> {
     }
 
     private void setupValueChangedListeners() {
-        getSkinnable().invalidProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                startInvalidInputAnimation();
-            } else {
-                State.VALID.imageView.setOpacity(1.0);
-                startFadeOutValidIconTransition();
-            }
-        });
     }
 
     private void setupBindings() {
-        readOnlyNode.textProperty().bind(getSkinnable().valueProperty().asString(infinite_roll_selection.FORMATTED_INTEGER_PATTERN));
-        editableNode.textProperty().bindBidirectional(getSkinnable().userFacingTextProperty());
-
-        editableNode.promptTextProperty().bind(getSkinnable().labelProperty());
-
-        editableNode.visibleProperty().bind(getSkinnable().readOnlyProperty().not());
-        chooserButton.visibleProperty().bind(getSkinnable().readOnlyProperty().not());
-        readOnlyNode.visibleProperty().bind(getSkinnable().readOnlyProperty());
-
-        State.INVALID.imageView.visibleProperty().bind(getSkinnable().invalidProperty());
 
         State.INVALID.imageView.xProperty().bind(editableNode.translateXProperty().add(editableNode.layoutXProperty()).subtract(IMG_OFFSET));
         State.INVALID.imageView.yProperty().bind(editableNode.translateYProperty().add(editableNode.layoutYProperty()).subtract(IMG_OFFSET));
