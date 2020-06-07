@@ -1,5 +1,6 @@
 package cuie.project.infinite_roll_selection;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javafx.beans.property.BooleanProperty;
@@ -15,12 +16,14 @@ import javafx.scene.text.Font;
 
 public class Infinite_roll_selection extends Control {
 
+    private ArrayList<String> values;
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty value = new SimpleIntegerProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
 
-    public Infinite_roll_selection() {
+    public Infinite_roll_selection(ArrayList<String> values) {
+        this.values = values;
         initializeSelf();
         addValueChangeListener();
     }
@@ -93,7 +96,5 @@ public class Infinite_roll_selection extends Control {
     public void setUserFacingText(String userFacingText) {
         this.userFacingText.set(userFacingText);
     }
-
-
 
 }

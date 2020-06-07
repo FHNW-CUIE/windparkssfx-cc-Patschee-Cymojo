@@ -8,6 +8,8 @@ import javafx.scene.layout.VBox;
 
 import cuie.project.infinite_roll_selection.Infinite_roll_selection;
 
+import java.util.ArrayList;
+
 class DemoPane extends BorderPane {
     private Infinite_roll_selection infiniterollselection;
 
@@ -28,10 +30,17 @@ class DemoPane extends BorderPane {
     private void initializeControls() {
         setPadding(new Insets(10));
 
-        infiniterollselection = new Infinite_roll_selection();
+        // Todo: Richtige arraylist mitgeben
+        ArrayList<String> values = new ArrayList<>();
+        values.add("Im Umbau");
+        values.add("In Betrieb");
+        values.add("Ausser Betrieb");
+        values.add("Keine Angaben");
 
-        // Todo: max value zu array length machen
-        indexSlider = new Slider(0, 5, 0);
+        infiniterollselection = new Infinite_roll_selection(values);
+
+
+        indexSlider = new Slider(0, values.size()-1, 0);
         indexLabel = new Label();
     }
 
