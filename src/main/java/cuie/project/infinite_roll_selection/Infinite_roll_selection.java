@@ -83,9 +83,7 @@ public class Infinite_roll_selection extends Control {
         getStyleClass().add("infinite-roll-selection");
     }
 
-    //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
-        index.addListener((observable, oldValue, newValue) -> setAllTexts(newValue.intValue()));
     }
 
     public void setAllTexts(int newValue) {
@@ -95,15 +93,13 @@ public class Infinite_roll_selection extends Control {
         if (newValue == 0) {
             setPrevText(values.get(values.size() - 1));
             setNextText(values.get(newValue + 1));
-        }
-        if (newValue == values.size() - 1) {
+        } else if (newValue == values.size() - 1) {
             setPrevText(values.get(newValue - 1));
             setNextText(values.get(0));
+        } else {
+            setPrevText(values.get(newValue - 1));
+            setNextText(values.get(newValue + 1));
         }
-        System.out.println();
-        System.out.println();
-        System.out.println();
-
     }
 
     //todo: Forgiving Format implementieren

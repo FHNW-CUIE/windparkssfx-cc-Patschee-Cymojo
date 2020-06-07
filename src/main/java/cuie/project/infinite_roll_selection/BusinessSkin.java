@@ -9,10 +9,6 @@ import javafx.scene.shape.Rectangle;
 
 //todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<Infinite_roll_selection> {
-    private static final int IMG_SIZE   = 12;
-    private static final int IMG_OFFSET = 4;
-
-
     private static final int BORDER_WIDTH = 10;
 
     private static final String STYLE_CSS = "style.css";
@@ -35,6 +31,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         setupEventHandlers();
         setupValueChangedListeners();
         setupBindings();
+
+        getSkinnable().setAllTexts(getSkinnable().indexProperty().getValue());
     }
 
     private void initializeSelf() {
@@ -48,14 +46,18 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         background = new Rectangle(300, 100, Color.GRAY);
         background.getStyleClass().add("background-rect");
 
-        prevLabel = new Label(getSkinnable().getValues().get(0));
+        prevLabel = new Label();
         prevLabel.getStyleClass().add("label");
-        userFacingLabel = new Label(getSkinnable().getValues().get(1));
+        prevLabel.setMouseTransparent(true);
+        userFacingLabel = new Label();
         userFacingLabel.getStyleClass().add("label");
-        nextLabel = new Label(getSkinnable().getValues().get(2));
+        userFacingLabel.setMouseTransparent(true);
+        nextLabel = new Label();
         nextLabel.getStyleClass().add("label");
-        tempLabel = new Label(getSkinnable().getValues().get(3));
+        nextLabel.setMouseTransparent(true);
+        tempLabel = new Label();
         tempLabel.getStyleClass().add("label");
+        tempLabel.setMouseTransparent(true);
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
@@ -71,8 +73,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         StackPane.setAlignment(border, Pos.CENTER);
         StackPane.setAlignment(background, Pos.CENTER);
-        StackPane.setAlignment(prevLabel, Pos.CENTER);
-        StackPane.setAlignment(userFacingLabel, Pos.TOP_CENTER);
+        StackPane.setAlignment(prevLabel, Pos.TOP_CENTER);
+        StackPane.setAlignment(userFacingLabel, Pos.CENTER);
         StackPane.setAlignment(nextLabel, Pos.BOTTOM_CENTER);
 
         getChildren().add(drawingPane);
@@ -97,15 +99,14 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupValueChangedListeners() {
-        // Todo: on index change, play animation and update skinnable setAllTexts(newValue)
+        getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> getSkinnable().setAllTexts(newValue.intValue()));
     }
 
     private void setupBindings() {
-    }
+        prevLabel.textProperty().bind(getSkinnable().prevTextProperty());
+        userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
+        nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
+        tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
 
-    /*private void loadFonts(String... font){
-        for(String f : font){
-            Font.loadFont(getClass().getResourceAsStream(f), 0);
-        }
-    }*/
+    }
 }
