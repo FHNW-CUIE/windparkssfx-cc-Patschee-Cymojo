@@ -14,7 +14,6 @@ public class Infinite_roll_selection extends Control {
 
     private ArrayList<String> values;
 
-    //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty index = new SimpleIntegerProperty();
     private final StringProperty prevText = new SimpleStringProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
@@ -102,8 +101,6 @@ public class Infinite_roll_selection extends Control {
             setNextText(values.get(newValue + 1));
         }
     }
-
-    //todo: Forgiving Format implementieren
 
     public void loadFonts(String... font) {
         for (String f : font) {
