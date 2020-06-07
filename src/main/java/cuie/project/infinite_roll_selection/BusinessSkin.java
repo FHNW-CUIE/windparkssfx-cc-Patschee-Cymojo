@@ -10,17 +10,20 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-//todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private static final int BORDER_WIDTH = 10;
+    private static final int CONTROL_HEIGHT = 100;
+    private static final int CONTROL_WIDTH = 300;
 
     private static final String STYLE_CSS = "style.css";
 
     private StackPane drawingPane;
+    private VBox contentBox;
 
     private Rectangle border;
     private Rectangle background;
@@ -51,9 +54,9 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void initializeParts() {
 
-        border = new Rectangle(300+(BORDER_WIDTH*2), 100+(BORDER_WIDTH*2), Color.BLACK);
+        border = new Rectangle(CONTROL_WIDTH+(BORDER_WIDTH*2), CONTROL_HEIGHT+(BORDER_WIDTH*2), Color.BLACK);
 
-        background = new Rectangle(300, 100, Color.GRAY);
+        background = new Rectangle(CONTROL_WIDTH, CONTROL_HEIGHT, Color.GRAY);
         background.getStyleClass().add("background-rect");
 
         prevLabel = new Label();
@@ -72,6 +75,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
+
+        contentBox = new VBox();
     }
 
     private void initializeAnimations() {
@@ -118,17 +123,14 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void layoutParts() {
-       drawingPane.getChildren().add(border);
-       drawingPane.getChildren().add(background);
-       drawingPane.getChildren().add(prevLabel);
-       drawingPane.getChildren().add(userFacingLabel);
-       drawingPane.getChildren().add(nextLabel);
+
+        contentBox.getChildren().addAll(prevLabel, userFacingLabel, nextLabel);
+        contentBox.setAlignment(Pos.CENTER);
+        drawingPane.getChildren().addAll(border, background, contentBox);
 
         StackPane.setAlignment(border, Pos.CENTER);
         StackPane.setAlignment(background, Pos.CENTER);
-        StackPane.setAlignment(prevLabel, Pos.TOP_CENTER);
-        StackPane.setAlignment(userFacingLabel, Pos.CENTER);
-        StackPane.setAlignment(nextLabel, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(contentBox, Pos.CENTER);
 
         getChildren().add(drawingPane);
     }
