@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol.demo;
+package cuie.project.infinite_roll_selection.demo;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
@@ -8,10 +8,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import cuie.project.template_businesscontrol.BusinessControl;
+import cuie.project.infinite_roll_selection.infinite_roll_selection;
 
 class DemoPane extends BorderPane {
-    private BusinessControl businessControl;
+    private infinite_roll_selection infiniterollselection;
 
     private Slider ageSlider;
 
@@ -33,7 +33,7 @@ class DemoPane extends BorderPane {
     private void initializeControls() {
         setPadding(new Insets(10));
 
-        businessControl = new BusinessControl();
+        infiniterollselection = new infinite_roll_selection();
 
         ageSlider = new Slider(0, 130, 0);
 
@@ -47,7 +47,7 @@ class DemoPane extends BorderPane {
     }
 
     private void layoutControls() {
-        setCenter(businessControl);
+        setCenter(infiniterollselection);
         VBox box = new VBox(10,
                             new Label("Business Control Properties"),
                             new Label("Age")      , ageSlider,
@@ -68,10 +68,10 @@ class DemoPane extends BorderPane {
         readOnlyBox.selectedProperty() .bindBidirectional(model.age_readOnlyProperty());
         mandatoryBox.selectedProperty().bindBidirectional(model.age_mandatoryProperty());
 
-        businessControl.valueProperty()    .bindBidirectional(model.ageProperty());
-        businessControl.labelProperty()    .bind(model.age_LabelProperty());
-        businessControl.readOnlyProperty() .bind(model.age_readOnlyProperty());
-        businessControl.mandatoryProperty().bind(model.age_mandatoryProperty());
+        infiniterollselection.valueProperty()    .bindBidirectional(model.ageProperty());
+        infiniterollselection.labelProperty()    .bind(model.age_LabelProperty());
+        infiniterollselection.readOnlyProperty() .bind(model.age_readOnlyProperty());
+        infiniterollselection.mandatoryProperty().bind(model.age_mandatoryProperty());
     }
 
 }

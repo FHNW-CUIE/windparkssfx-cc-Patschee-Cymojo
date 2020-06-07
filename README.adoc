@@ -46,7 +46,7 @@ Business Control
 
 Für die einzelnen CustomControls des Dashboards verwenden Sie bei der Implementierung die Struktur wie im package `template_simplecontrol`.
 
-Für das _'Business Control'_ verwenden Sie bei der Implementierung die Struktur wie im package `template_businesscontrol`.
+Für das _'Business Control'_ verwenden Sie bei der Implementierung die Struktur wie im package `infinite_roll_selection`.
 
 Es ist Bestandteil der Aufgabe das passende Template auszuwählen (und zu erkennen, falls ein Template nicht geeignet ist).
 

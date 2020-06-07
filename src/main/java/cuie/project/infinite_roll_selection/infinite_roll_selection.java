@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol;
+package cuie.project.infinite_roll_selection;
 
 import java.util.regex.Pattern;
 
@@ -13,8 +13,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
 
-//todo: umbenennen
-public class BusinessControl extends Control {
+public class infinite_roll_selection extends Control {
     private static final PseudoClass MANDATORY_CLASS = PseudoClass.getPseudoClass("mandatory");
     private static final PseudoClass INVALID_CLASS   = PseudoClass.getPseudoClass("invalid");
 
@@ -50,7 +49,7 @@ public class BusinessControl extends Control {
     private final StringProperty  errorMessage = new SimpleStringProperty();
 
 
-    public BusinessControl() {
+    public infinite_roll_selection() {
         initializeSelf();
         addValueChangeListener();
     }
@@ -73,7 +72,7 @@ public class BusinessControl extends Control {
     }
 
     private void initializeSelf() {
-         getStyleClass().add("business-control");
+         getStyleClass().add("infinite-roll-selection");
 
          setUserFacingText(convertToString(getValue()));
     }

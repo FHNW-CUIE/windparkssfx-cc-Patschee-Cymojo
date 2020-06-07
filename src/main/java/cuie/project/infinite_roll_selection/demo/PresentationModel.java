@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol.demo;
+package cuie.project.infinite_roll_selection.demo;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;

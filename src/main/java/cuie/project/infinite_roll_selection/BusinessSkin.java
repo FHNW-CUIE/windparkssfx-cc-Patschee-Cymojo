@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol;
+package cuie.project.infinite_roll_selection;
 
 import java.util.Arrays;
 
@@ -22,7 +22,7 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 
 //todo: durch eigenen Skin ersetzen
-class BusinessSkin extends SkinBase<BusinessControl> {
+class BusinessSkin extends SkinBase<infinite_roll_selection> {
     private static final int IMG_SIZE   = 12;
     private static final int IMG_OFFSET = 4;
 
@@ -59,7 +59,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     private Animation      invalidInputAnimation;
     private FadeTransition fadeOutValidIconAnimation;
 
-    BusinessSkin(BusinessControl control) {
+    BusinessSkin(infinite_roll_selection control) {
         super(control);
         initializeSelf();
         initializeParts();
@@ -190,7 +190,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     }
 
     private void setupBindings() {
-        readOnlyNode.textProperty().bind(getSkinnable().valueProperty().asString(BusinessControl.FORMATTED_INTEGER_PATTERN));
+        readOnlyNode.textProperty().bind(getSkinnable().valueProperty().asString(infinite_roll_selection.FORMATTED_INTEGER_PATTERN));
         editableNode.textProperty().bindBidirectional(getSkinnable().userFacingTextProperty());
 
         editableNode.promptTextProperty().bind(getSkinnable().labelProperty());

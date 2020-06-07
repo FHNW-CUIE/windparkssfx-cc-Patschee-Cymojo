@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol;
+package cuie.project.infinite_roll_selection;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -7,12 +7,12 @@ import javafx.scene.layout.VBox;
 class DropDownChooser extends VBox {
     private static final String STYLE_CSS = "dropDownChooser.css";
 
-    private final BusinessControl businessControl;
+    private final infinite_roll_selection infiniterollselection;
 
     private Label tobeReplacedLabel;
 
-    DropDownChooser(BusinessControl businessControl) {
-        this.businessControl = businessControl;
+    DropDownChooser(infinite_roll_selection infiniterollselection) {
+        this.infiniterollselection = infiniterollselection;
         initializeSelf();
         initializeParts();
         layoutParts();

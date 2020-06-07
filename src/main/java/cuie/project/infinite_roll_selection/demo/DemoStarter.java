@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol.demo;
+package cuie.project.infinite_roll_selection.demo;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -14,7 +14,7 @@ public class DemoStarter extends Application {
 
         Scene scene = new Scene(rootPanel);
 
-        primaryStage.setTitle("Business Control Demo");
+        primaryStage.setTitle("Super cool infinite roll selection custom business control demo");
         primaryStage.setScene(scene);
 
         primaryStage.show();
