@@ -1,7 +1,5 @@
 package cuie.project.infinite_roll_selection;
 
-import java.util.ArrayList;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,13 +8,18 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
+
 public class Infinite_roll_selection extends Control {
 
     private ArrayList<String> values;
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty index = new SimpleIntegerProperty();
+    private final StringProperty prevText = new SimpleStringProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
+    private final StringProperty nextText = new SimpleStringProperty();
+    private final StringProperty tempText = new SimpleStringProperty();
 
 
 
@@ -32,32 +35,87 @@ public class Infinite_roll_selection extends Control {
     }
 
     public void increase() {
-        setIndex(getIndex() + 1);
+        int newValue = getIndex() + 1;
+
+        if (newValue >= values.size()) {
+            newValue = 0;
+        }
+
+        if(values.size() > 2 ) {
+            if (newValue + 2 == values.size()) {
+                setTempText(values.get(0));
+            } else if (newValue + 2 > values.size()) {
+                setTempText(values.get(1));
+            } else {
+                setTempText(values.get(newValue));
+            }
+        } else {
+            setTempText(values.get(newValue));
+        }
+
+        setIndex(newValue);
     }
 
     public void decrease() {
-        setIndex(getIndex() - 1);
+        int newValue = getIndex() - 1;
+
+        if (newValue < 0) {
+            newValue = values.size() - 1;
+        }
+
+        if(values.size() > 2 ) {
+            if (newValue - 2 == -1) {
+                setTempText(values.get(values.size()-1));
+            } else if (newValue - 2 < -1) {
+                setTempText(values.get(values.size()-2));
+            } else {
+                setTempText(values.get(newValue));
+            }
+        } else {
+            setTempText(values.get(newValue));
+        }
+
+        setIndex(newValue);
+
     }
 
     private void initializeSelf() {
-         getStyleClass().add("infinite-roll-selection");
+        getStyleClass().add("infinite-roll-selection");
     }
 
     //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
+        index.addListener((observable, oldValue, newValue) -> setAllTexts(newValue.intValue()));
+    }
+
+    public void setAllTexts(int newValue) {
+        //Auswahl anpassen
+        setUserFacingText(values.get(newValue));
+        //prev und next Text anpassen:
+        if (newValue == 0) {
+            setPrevText(values.get(values.size() - 1));
+            setNextText(values.get(newValue + 1));
+        }
+        if (newValue == values.size() - 1) {
+            setPrevText(values.get(newValue - 1));
+            setNextText(values.get(0));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println();
 
     }
 
     //todo: Forgiving Format implementieren
 
-    public void loadFonts(String... font){
-        for(String f : font){
+    public void loadFonts(String... font) {
+        for (String f : font) {
             Font.loadFont(getClass().getResourceAsStream(f), 0);
         }
     }
 
-    public void addStylesheetFiles(String... stylesheetFile){
-        for(String file : stylesheetFile){
+    public void addStylesheetFiles(String... stylesheetFile) {
+        for (String file : stylesheetFile) {
             String stylesheet = getClass().getResource(file).toExternalForm();
             getStylesheets().add(stylesheet);
         }
@@ -67,7 +125,6 @@ public class Infinite_roll_selection extends Control {
     private int convertToInt(String userInput) {
         return Integer.parseInt(userInput);
     }
-
 
 
     // alle  Getter und Setter
@@ -95,6 +152,42 @@ public class Infinite_roll_selection extends Control {
         this.userFacingText.set(userFacingText);
     }
 
+    public String getPrevText() {
+        return prevText.get();
+    }
+
+    public StringProperty prevTextProperty() {
+        return prevText;
+    }
+
+    public void setPrevText(String prevText) {
+        this.prevText.set(prevText);
+    }
+
+    public String getNextText() {
+        return nextText.get();
+    }
+
+    public StringProperty nextTextProperty() {
+        return nextText;
+    }
+
+    public void setNextText(String nextText) {
+        this.nextText.set(nextText);
+    }
+
+    public String getTempText() {
+        return tempText.get();
+    }
+
+    public StringProperty tempTextProperty() {
+        return tempText;
+    }
+
+    public void setTempText(String tempText) {
+        this.tempText.set(tempText);
+    }
+  
     public ArrayList<String> getValues() {
         return values;
     }
