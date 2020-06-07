@@ -1,15 +1,11 @@
 package cuie.project.infinite_roll_selection;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.css.PseudoClass;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
@@ -19,8 +15,10 @@ public class Infinite_roll_selection extends Control {
     private ArrayList<String> values;
 
     //todo: Integer bei Bedarf ersetzen
-    private final IntegerProperty value = new SimpleIntegerProperty();
+    private final IntegerProperty index = new SimpleIntegerProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
+
+
 
     public Infinite_roll_selection(ArrayList<String> values) {
         this.values = values;
@@ -34,11 +32,11 @@ public class Infinite_roll_selection extends Control {
     }
 
     public void increase() {
-        setValue(getValue() + 1);
+        setIndex(getIndex() + 1);
     }
 
     public void decrease() {
-        setValue(getValue() - 1);
+        setIndex(getIndex() - 1);
     }
 
     private void initializeSelf() {
@@ -73,16 +71,16 @@ public class Infinite_roll_selection extends Control {
 
 
     // alle  Getter und Setter
-    public int getValue() {
-        return value.get();
+    public int getIndex() {
+        return index.get();
     }
 
-    public IntegerProperty valueProperty() {
-        return value;
+    public IntegerProperty indexProperty() {
+        return index;
     }
 
-    public void setValue(int value) {
-        this.value.set(value);
+    public void setIndex(int index) {
+        this.index.set(index);
     }
 
     public String getUserFacingText() {
@@ -97,4 +95,7 @@ public class Infinite_roll_selection extends Control {
         this.userFacingText.set(userFacingText);
     }
 
+    public ArrayList<String> getValues() {
+        return values;
+    }
 }

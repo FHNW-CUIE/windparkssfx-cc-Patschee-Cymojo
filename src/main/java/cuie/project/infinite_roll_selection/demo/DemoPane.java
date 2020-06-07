@@ -63,7 +63,7 @@ class DemoPane extends BorderPane {
 
         indexSlider.valueProperty()      .bindBidirectional(model.selectedIndexProperty());
 
-        infiniterollselection.valueProperty()    .bindBidirectional(model.selectedIndexProperty());
+        infiniterollselection.indexProperty()    .bindBidirectional(model.selectedIndexProperty());
 
 
     }

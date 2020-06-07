@@ -1,60 +1,30 @@
 package cuie.project.infinite_roll_selection;
 
-import java.util.Arrays;
-
-import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.stage.Popup;
-import javafx.util.Duration;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 //todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private static final int IMG_SIZE   = 12;
     private static final int IMG_OFFSET = 4;
 
-    private static final String ANGLE_DOWN = "\uf107";
-    private static final String ANGLE_UP   = "\uf106";
 
-    private enum State {
-        VALID("Valid",      "valid.png"),
-        INVALID("Invalid",  "invalid.png");
-
-        public final String    text;
-        public final ImageView imageView;
-
-        State(final String text, final String file) {
-            this.text = text;
-            String url = BusinessSkin.class.getResource("/icons/" + file).toExternalForm();
-            this.imageView = new ImageView(new Image(url,
-                                                     IMG_SIZE, IMG_SIZE,
-                                                     true, false));
-        }
-    }
+    private static final int BORDER_WIDTH = 10;
 
     private static final String STYLE_CSS = "style.css";
 
-    // all parts
-    private TextField editableNode;
-    private Label     readOnlyNode;
-
     private StackPane drawingPane;
 
-    private Animation      invalidInputAnimation;
-    private FadeTransition fadeOutValidIconAnimation;
+    private Rectangle border;
+    private Rectangle background;
+    private Label prevLabel;
+    private Label userFacingLabel;
+    private Label nextLabel;
+    private Label tempLabel;
 
     BusinessSkin(Infinite_roll_selection control) {
         super(control);
@@ -68,67 +38,51 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void initializeSelf() {
-        getSkinnable().loadFonts("/fonts/Lato/Lato-Lig.ttf",  "/fonts/Lato/Lato-Reg.ttf", "/fonts/ds_digital/DS-DIGI.TTF", "/fonts/fontawesome-webfont.ttf");
         getSkinnable().addStylesheetFiles(STYLE_CSS);
     }
 
     private void initializeParts() {
-        editableNode = new TextField();
-        editableNode.getStyleClass().add("editable-node");
 
-        readOnlyNode = new Label();
-        readOnlyNode.getStyleClass().add("read-only-node");
+        border = new Rectangle(300+(BORDER_WIDTH*2), 100+(BORDER_WIDTH*2), Color.BLACK);
 
-        State.VALID.imageView.setOpacity(0.0);
+        background = new Rectangle(300, 100, Color.GRAY);
+        background.getStyleClass().add("background-rect");
+
+        prevLabel = new Label(getSkinnable().getValues().get(0));
+        prevLabel.getStyleClass().add("label");
+        userFacingLabel = new Label(getSkinnable().getValues().get(1));
+        userFacingLabel.getStyleClass().add("label");
+        nextLabel = new Label(getSkinnable().getValues().get(2));
+        nextLabel.getStyleClass().add("label");
+        tempLabel = new Label(getSkinnable().getValues().get(3));
+        tempLabel.getStyleClass().add("label");
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
     }
 
     private void layoutParts() {
+       drawingPane.getChildren().add(border);
+       drawingPane.getChildren().add(background);
+       drawingPane.getChildren().add(prevLabel);
+       drawingPane.getChildren().add(userFacingLabel);
+       drawingPane.getChildren().add(nextLabel);
+       //drawingPane.getChildren().add(tempLabel);
 
-        Arrays.stream(State.values())
-              .map(state -> state.imageView)
-              .forEach(imageView -> {
-                  imageView.setManaged(false);
-                  drawingPane.getChildren().add(imageView);
-              });
-
-        StackPane.setAlignment(editableNode, Pos.CENTER_LEFT);
-        StackPane.setAlignment(readOnlyNode, Pos.CENTER_LEFT);
+        StackPane.setAlignment(border, Pos.CENTER);
+        StackPane.setAlignment(background, Pos.CENTER);
+        StackPane.setAlignment(prevLabel, Pos.CENTER);
+        StackPane.setAlignment(userFacingLabel, Pos.TOP_CENTER);
+        StackPane.setAlignment(nextLabel, Pos.BOTTOM_CENTER);
 
         getChildren().add(drawingPane);
     }
 
     private void setupAnimations() {
-        int      delta    = 5;
-        Duration duration = Duration.millis(30);
-
-        TranslateTransition moveRight = new TranslateTransition(duration, editableNode);
-        moveRight.setFromX(0.0);
-        moveRight.setByX(delta);
-        moveRight.setAutoReverse(true);
-        moveRight.setCycleCount(2);
-        moveRight.setInterpolator(Interpolator.LINEAR);
-
-        TranslateTransition moveLeft = new TranslateTransition(duration, editableNode);
-        moveLeft.setFromX(0.0);
-        moveLeft.setByX(-delta);
-        moveLeft.setAutoReverse(true);
-        moveLeft.setCycleCount(2);
-        moveLeft.setInterpolator(Interpolator.LINEAR);
-
-        invalidInputAnimation = new SequentialTransition(moveRight, moveLeft);
-        invalidInputAnimation.setCycleCount(3);
-
-        fadeOutValidIconAnimation = new FadeTransition(Duration.millis(500), State.VALID.imageView);
-        fadeOutValidIconAnimation.setDelay(Duration.seconds(1));
-        fadeOutValidIconAnimation.setFromValue(1.0);
-        fadeOutValidIconAnimation.setToValue(0.0);
     }
 
     private void setupEventHandlers() {
-        editableNode.setOnKeyPressed(event -> {
+        background.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case UP:
                     getSkinnable().increase();
@@ -143,33 +97,15 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupValueChangedListeners() {
+        // Todo: on index change, play animation and update skinnable setAllTexts(newValue)
     }
 
     private void setupBindings() {
-
-        State.INVALID.imageView.xProperty().bind(editableNode.translateXProperty().add(editableNode.layoutXProperty()).subtract(IMG_OFFSET));
-        State.INVALID.imageView.yProperty().bind(editableNode.translateYProperty().add(editableNode.layoutYProperty()).subtract(IMG_OFFSET));
-        State.VALID.imageView.xProperty().bind(editableNode.layoutXProperty().subtract(IMG_OFFSET));
-        State.VALID.imageView.yProperty().bind(editableNode.layoutYProperty().subtract(IMG_OFFSET));
     }
 
-    private void startFadeOutValidIconTransition() {
-        if (fadeOutValidIconAnimation.getStatus().equals(Animation.Status.RUNNING)) {
-            return;
-        }
-        fadeOutValidIconAnimation.play();
-    }
-
-    private void startInvalidInputAnimation() {
-        if (invalidInputAnimation.getStatus().equals(Animation.Status.RUNNING)) {
-            invalidInputAnimation.stop();
-        }
-        invalidInputAnimation.play();
-    }
-
-    private void loadFonts(String... font){
+    /*private void loadFonts(String... font){
         for(String f : font){
             Font.loadFont(getClass().getResourceAsStream(f), 0);
         }
-    }
+    }*/
 }
