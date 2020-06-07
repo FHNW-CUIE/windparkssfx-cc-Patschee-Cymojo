@@ -1,11 +1,18 @@
 package cuie.project.infinite_roll_selection;
 
+import javafx.animation.Animation;
+import javafx.animation.FillTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 //todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<Infinite_roll_selection> {
@@ -22,17 +29,20 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private Label nextLabel;
     private Label tempLabel;
 
+    private Animation upAnimation;
+    private Animation downAnimation;
+
     BusinessSkin(Infinite_roll_selection control) {
         super(control);
         initializeSelf();
         initializeParts();
+        initializeAnimations();
         layoutParts();
-        setupAnimations();
         setupEventHandlers();
         setupValueChangedListeners();
         setupBindings();
 
-        getSkinnable().setAllTexts(getSkinnable().indexProperty().getValue());
+        updateUI();
     }
 
     private void initializeSelf() {
@@ -51,6 +61,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         prevLabel.setMouseTransparent(true);
         userFacingLabel = new Label();
         userFacingLabel.getStyleClass().add("label");
+        userFacingLabel.getStyleClass().add("user-facing-label");
         userFacingLabel.setMouseTransparent(true);
         nextLabel = new Label();
         nextLabel.getStyleClass().add("label");
@@ -63,13 +74,55 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         drawingPane.getStyleClass().add("drawing-pane");
     }
 
+    private void initializeAnimations() {
+        Duration duration = Duration.millis(200);
+        double offset = 0;
+
+        // Animation for scrolling up
+        TranslateTransition prevTransitionUp = new TranslateTransition(duration, prevLabel);
+        prevTransitionUp.setFromY(prevLabel.getLayoutY());
+        prevTransitionUp.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition userFacingTransitionUp = new TranslateTransition(duration, userFacingLabel);
+        userFacingTransitionUp.setFromY(userFacingLabel.getLayoutY());
+        userFacingTransitionUp.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition nextTransitionUp = new TranslateTransition(duration, nextLabel);
+        nextTransitionUp.setFromY(nextLabel.getLayoutY());
+        nextTransitionUp.setToY(userFacingLabel.getLayoutY());
+
+        TranslateTransition tempTransitionUp = new TranslateTransition(duration, tempLabel);
+        tempTransitionUp.setFromY(nextLabel.getLayoutY() + nextLabel.getHeight());
+        tempTransitionUp.setToY(nextLabel.getLayoutY());
+
+        upAnimation = new ParallelTransition(prevTransitionUp, userFacingTransitionUp, nextTransitionUp, tempTransitionUp);
+
+        // Animation for scrolling down
+        TranslateTransition tempTransitionDown = new TranslateTransition(duration, tempLabel);
+        tempTransitionDown.setFromY(prevLabel.getLayoutY() - prevLabel.getHeight());
+        tempTransitionDown.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition prevTransitionDown = new TranslateTransition(duration, prevLabel);
+        prevTransitionDown.setFromY(prevLabel.getLayoutY());
+        prevTransitionDown.setToY(userFacingLabel.getLayoutY());
+
+        TranslateTransition userFacingTransitionDown = new TranslateTransition(duration, userFacingLabel);
+        userFacingTransitionDown.setFromY(userFacingLabel.getLayoutY());
+        userFacingTransitionDown.setToY(nextLabel.getLayoutY());
+
+        TranslateTransition nextTransitionDown = new TranslateTransition(duration, nextLabel);
+        nextTransitionDown.setFromY(nextLabel.getLayoutY());
+        nextTransitionDown.setToY(nextLabel.getLayoutY());
+
+        downAnimation = new ParallelTransition(prevTransitionDown, userFacingTransitionDown, nextTransitionDown, tempTransitionDown);
+    }
+
     private void layoutParts() {
        drawingPane.getChildren().add(border);
        drawingPane.getChildren().add(background);
        drawingPane.getChildren().add(prevLabel);
        drawingPane.getChildren().add(userFacingLabel);
        drawingPane.getChildren().add(nextLabel);
-       //drawingPane.getChildren().add(tempLabel);
 
         StackPane.setAlignment(border, Pos.CENTER);
         StackPane.setAlignment(background, Pos.CENTER);
@@ -78,9 +131,6 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         StackPane.setAlignment(nextLabel, Pos.BOTTOM_CENTER);
 
         getChildren().add(drawingPane);
-    }
-
-    private void setupAnimations() {
     }
 
     private void setupEventHandlers() {
@@ -99,7 +149,15 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupValueChangedListeners() {
-        getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> getSkinnable().setAllTexts(newValue.intValue()));
+        getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> {
+            getSkinnable().setAllTexts(newValue.intValue());
+            if (newValue.intValue() > oldValue.intValue()) {
+                upAnimation.play();
+            } else if (newValue.intValue() < oldValue.intValue()) {
+                downAnimation.play();
+            }
+
+        });
     }
 
     private void setupBindings() {
@@ -107,6 +165,9 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
         nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
         tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
+    }
 
+    private void updateUI() {
+        getSkinnable().setAllTexts(getSkinnable().indexProperty().getValue());
     }
 }

@@ -15,6 +15,12 @@
     -fx-font-size:        24;
 }
 
+.infinite-roll-selection .user-facing-label{
+    -fx-font-size:        34;
+}
+
+
+
 .infinite-roll-selection .background-rect {
     -fx-fill: linear-gradient(from 50% 0% to 50% 100%,
                                             rgba(84, 84, 84, 1)     0%,
