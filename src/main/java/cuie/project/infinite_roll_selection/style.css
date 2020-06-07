@@ -4,6 +4,12 @@
     -fx-background-color: rgb(255, 255, 250);
 }
 
+.infinite-roll-selection .border{
+    -fx-fill:       black;
+    -fx-stroke-width:   4;
+    -fx-stroke:     black;
+}
+
 .infinite-roll-selection .drawing-pane {
     -fx-background-color: transparent;
 }

@@ -40,6 +40,7 @@ public class Infinite_roll_selection extends Control {
             newValue = 0;
         }
 
+        //Todo: In Set all text ?
         if(values.size() > 2 ) {
             if (newValue + 2 == values.size()) {
                 setTempText(values.get(0));

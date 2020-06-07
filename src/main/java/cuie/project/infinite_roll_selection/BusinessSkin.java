@@ -22,6 +22,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private static final String STYLE_CSS = "style.css";
 
+    private final BooleanProperty focused = new SimpleBooleanProperty();
+
     private StackPane drawingPane;
     private VBox contentBox;
 
@@ -55,9 +57,12 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private void initializeParts() {
 
         border = new Rectangle(CONTROL_WIDTH+(BORDER_WIDTH*2), CONTROL_HEIGHT+(BORDER_WIDTH*2), Color.BLACK);
+        border.getStyleClass().add("border");
+
 
         background = new Rectangle(CONTROL_WIDTH, CONTROL_HEIGHT, Color.GRAY);
         background.getStyleClass().add("background-rect");
+        background.setMouseTransparent(true);
 
         prevLabel = new Label();
         prevLabel.getStyleClass().add("label");
@@ -136,7 +141,16 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupEventHandlers() {
-        background.setOnKeyPressed(event -> {
+        border.setOnScroll(event -> {
+            if( event.getDeltaY() < 0 ){
+                getSkinnable().increase();
+            }else{
+                getSkinnable().decrease();
+            }
+        });
+
+        border.setOnMouseClicked(event -> border.requestFocus());
+        border.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case UP:
                     getSkinnable().increase();
@@ -160,6 +174,13 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
             }
 
         });
+        focused.addListener(((observable, oldValue, newValue) -> {
+            if (newValue){
+                border.setStroke(Color.YELLOW);
+            } else {
+                border.setStroke(Color.BLACK);
+            }
+        }));
     }
 
     private void setupBindings() {
@@ -167,6 +188,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
         nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
         tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
+        focused.bind( border.focusedProperty() );
     }
 
     private void updateUI() {
