@@ -117,7 +117,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> getSkinnable().setAllTexts(newValue.intValue()));
         focused.addListener(((observable, oldValue, newValue) -> {
             if (newValue){
-                border.setStroke(Color.color());
+                border.setStroke(Color.YELLOW);
             } else {
                 border.setStroke(Color.BLACK);
             }
