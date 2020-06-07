@@ -8,6 +8,12 @@
     -fx-background-color: transparent;
 }
 
+.infinite-roll-selection .label {
+    -fx-background-color: transparent;
+    -fx-font-family:      'Lato Regular';
+    -fx-font-size:        24;
+}
+/*
 .infinite-roll-selection .editable-node {
     -fx-font-family:      'Lato Regular';
     -fx-font-size:        14;
@@ -66,6 +72,16 @@
     -fx-background-color:  derive(-base-color, 70%);
     -fx-background-radius: 1024;
     -fx-background-insets: 4;
+}
+*/
+
+.infinite-roll-selection .background-rect {
+    -fx-fill: linear-gradient(from 50% 0% to 50% 100%,
+                                            rgba(84, 84, 84, 1)     0%,
+                                            rgba(126, 126, 126, 1)  10%,
+                                            rgba(216, 216, 216, 1)  50%,
+                                            rgba(121, 121, 121, 1)  90%,
+                                            rgba(75, 75, 75, 1)     100%);
 }
 
 

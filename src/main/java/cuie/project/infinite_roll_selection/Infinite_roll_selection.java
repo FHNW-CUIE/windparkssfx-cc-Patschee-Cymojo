@@ -21,6 +21,8 @@ public class Infinite_roll_selection extends Control {
     private final StringProperty nextText = new SimpleStringProperty();
     private final StringProperty tempText = new SimpleStringProperty();
 
+
+
     public Infinite_roll_selection(ArrayList<String> values) {
         this.values = values;
         initializeSelf();
@@ -74,6 +76,7 @@ public class Infinite_roll_selection extends Control {
         }
 
         setIndex(newValue);
+
     }
 
     private void initializeSelf() {
@@ -184,5 +187,8 @@ public class Infinite_roll_selection extends Control {
     public void setTempText(String tempText) {
         this.tempText.set(tempText);
     }
-
+  
+    public ArrayList<String> getValues() {
+        return values;
+    }
 }
