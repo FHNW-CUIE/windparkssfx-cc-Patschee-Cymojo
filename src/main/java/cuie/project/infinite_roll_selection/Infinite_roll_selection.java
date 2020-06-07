@@ -20,7 +20,9 @@ public class Infinite_roll_selection extends Control {
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty value = new SimpleIntegerProperty();
+    private final StringProperty prevText = new SimpleStringProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
+    private final StringProperty nextText = new SimpleStringProperty();
 
     public Infinite_roll_selection(ArrayList<String> values) {
         this.values = values;
@@ -34,32 +36,58 @@ public class Infinite_roll_selection extends Control {
     }
 
     public void increase() {
-        setValue(getValue() + 1);
+        int newValue = getValue() + 1;
+
+        if (newValue >= values.size()) {
+            newValue = 0;
+        }
+
+        setValue(newValue);
     }
 
     public void decrease() {
-        setValue(getValue() - 1);
+        int newValue = getValue() - 1;
+
+        if (newValue < 0) {
+            newValue = values.size() - 1;
+        }
+
+        setValue(newValue);
     }
 
     private void initializeSelf() {
-         getStyleClass().add("infinite-roll-selection");
+        getStyleClass().add("infinite-roll-selection");
     }
 
     //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
+        value.addListener((observable, oldValue, newValue) -> setAllTexts(newValue.intValue()));
+    }
 
+    private void setAllTexts(int newValue) {
+        //Auswahl anpassen
+        setUserFacingText(values.get(newValue));
+        //prev und next Text anpassen:
+        if (newValue == 0) {
+            setPrevText(values.get(values.size() - 1));
+            setNextText(values.get(newValue + 1));
+        }
+        if (newValue == values.size() - 1) {
+            setPrevText(values.get(newValue - 1));
+            setNextText(values.get(0));
+        }
     }
 
     //todo: Forgiving Format implementieren
 
-    public void loadFonts(String... font){
-        for(String f : font){
+    public void loadFonts(String... font) {
+        for (String f : font) {
             Font.loadFont(getClass().getResourceAsStream(f), 0);
         }
     }
 
-    public void addStylesheetFiles(String... stylesheetFile){
-        for(String file : stylesheetFile){
+    public void addStylesheetFiles(String... stylesheetFile) {
+        for (String file : stylesheetFile) {
             String stylesheet = getClass().getResource(file).toExternalForm();
             getStylesheets().add(stylesheet);
         }
@@ -69,7 +97,6 @@ public class Infinite_roll_selection extends Control {
     private int convertToInt(String userInput) {
         return Integer.parseInt(userInput);
     }
-
 
 
     // alle  Getter und Setter
@@ -95,6 +122,30 @@ public class Infinite_roll_selection extends Control {
 
     public void setUserFacingText(String userFacingText) {
         this.userFacingText.set(userFacingText);
+    }
+
+    public String getPrevText() {
+        return prevText.get();
+    }
+
+    public StringProperty prevTextProperty() {
+        return prevText;
+    }
+
+    public void setPrevText(String prevText) {
+        this.prevText.set(prevText);
+    }
+
+    public String getNextText() {
+        return nextText.get();
+    }
+
+    public StringProperty nextTextProperty() {
+        return nextText;
+    }
+
+    public void setNextText(String nextText) {
+        this.nextText.set(nextText);
     }
 
 }
