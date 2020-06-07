@@ -55,7 +55,6 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void initializeParts() {
-
         border = new Rectangle(CONTROL_WIDTH+(BORDER_WIDTH*2), CONTROL_HEIGHT+(BORDER_WIDTH*2), Color.BLACK);
         border.getStyleClass().add("border");
 
@@ -82,6 +81,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         drawingPane.getStyleClass().add("drawing-pane");
 
         contentBox = new VBox();
+        contentBox.setMouseTransparent(true);
     }
 
     private void initializeAnimations() {
@@ -143,6 +143,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private void setupEventHandlers() {
         border.setOnScroll(event -> {
             if( event.getDeltaY() < 0 ){
+                System.out.println("inc");
                 getSkinnable().increase();
             }else{
                 getSkinnable().decrease();
@@ -153,6 +154,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         border.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case UP:
+                    System.out.println("inc");
                     getSkinnable().increase();
                     event.consume();
                     break;
