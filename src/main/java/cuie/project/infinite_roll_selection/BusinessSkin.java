@@ -1,5 +1,7 @@
 package cuie.project.infinite_roll_selection;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
@@ -12,6 +14,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     private static final int BORDER_WIDTH = 10;
 
     private static final String STYLE_CSS = "style.css";
+
+    private final BooleanProperty focused = new SimpleBooleanProperty();
 
     private StackPane drawingPane;
 
@@ -41,10 +45,12 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void initializeParts() {
 
-        border = new Rectangle(300+(BORDER_WIDTH*2), 100+(BORDER_WIDTH*2), Color.BLACK);
+        border = new Rectangle(300+(BORDER_WIDTH*2), 100+(BORDER_WIDTH*2));
+        border.getStyleClass().add("border");
 
         background = new Rectangle(300, 100, Color.GRAY);
         background.getStyleClass().add("background-rect");
+        background.setMouseTransparent(true);
 
         prevLabel = new Label();
         prevLabel.getStyleClass().add("label");
@@ -84,7 +90,16 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupEventHandlers() {
-        background.setOnKeyPressed(event -> {
+        border.setOnScroll(event -> {
+            if( event.getDeltaY() < 0 ){
+                getSkinnable().increase();
+            }else{
+                getSkinnable().decrease();
+            }
+        });
+
+        border.setOnMouseClicked(event -> border.requestFocus());
+        border.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case UP:
                     getSkinnable().increase();
@@ -100,6 +115,13 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void setupValueChangedListeners() {
         getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> getSkinnable().setAllTexts(newValue.intValue()));
+        focused.addListener(((observable, oldValue, newValue) -> {
+            if (newValue){
+                border.setStroke(Color.color());
+            } else {
+                border.setStroke(Color.BLACK);
+            }
+        }));
     }
 
     private void setupBindings() {
@@ -107,6 +129,6 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
         nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
         tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
-
+        focused.bind( border.focusedProperty() );
     }
 }
