@@ -1,136 +1,160 @@
 package cuie.project.infinite_roll_selection;
 
-import java.util.Arrays;
-
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.SequentialTransition;
+import javafx.animation.FillTransition;
+import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
-import javafx.geometry.Point2D;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.stage.Popup;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-//todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<Infinite_roll_selection> {
-    private static final int IMG_SIZE   = 12;
-    private static final int IMG_OFFSET = 4;
-
-    private static final String ANGLE_DOWN = "\uf107";
-    private static final String ANGLE_UP   = "\uf106";
-
-    private enum State {
-        VALID("Valid",      "valid.png"),
-        INVALID("Invalid",  "invalid.png");
-
-        public final String    text;
-        public final ImageView imageView;
-
-        State(final String text, final String file) {
-            this.text = text;
-            String url = BusinessSkin.class.getResource("/icons/" + file).toExternalForm();
-            this.imageView = new ImageView(new Image(url,
-                                                     IMG_SIZE, IMG_SIZE,
-                                                     true, false));
-        }
-    }
+    private static final int BORDER_WIDTH = 10;
+    private static final int CONTROL_HEIGHT = 100;
+    private static final int CONTROL_WIDTH = 300;
 
     private static final String STYLE_CSS = "style.css";
 
-    // all parts
-    private TextField editableNode;
-    private Label     readOnlyNode;
+    private final BooleanProperty focused = new SimpleBooleanProperty();
 
     private StackPane drawingPane;
+    private VBox contentBox;
 
-    private Animation      invalidInputAnimation;
-    private FadeTransition fadeOutValidIconAnimation;
+    private Rectangle border;
+    private Rectangle background;
+    private Label prevLabel;
+    private Label userFacingLabel;
+    private Label nextLabel;
+    private Label tempLabel;
+
+    private Animation upAnimation;
+    private Animation downAnimation;
 
     BusinessSkin(Infinite_roll_selection control) {
         super(control);
         initializeSelf();
         initializeParts();
+        initializeAnimations();
         layoutParts();
-        setupAnimations();
         setupEventHandlers();
         setupValueChangedListeners();
         setupBindings();
+
+        updateUI();
     }
 
     private void initializeSelf() {
-        getSkinnable().loadFonts("/fonts/Lato/Lato-Lig.ttf",  "/fonts/Lato/Lato-Reg.ttf", "/fonts/ds_digital/DS-DIGI.TTF", "/fonts/fontawesome-webfont.ttf");
         getSkinnable().addStylesheetFiles(STYLE_CSS);
     }
 
     private void initializeParts() {
-        editableNode = new TextField();
-        editableNode.getStyleClass().add("editable-node");
+        border = new Rectangle(CONTROL_WIDTH+(BORDER_WIDTH*2), CONTROL_HEIGHT+(BORDER_WIDTH*2), Color.BLACK);
+        border.getStyleClass().add("border");
 
-        readOnlyNode = new Label();
-        readOnlyNode.getStyleClass().add("read-only-node");
 
-        State.VALID.imageView.setOpacity(0.0);
+        background = new Rectangle(CONTROL_WIDTH, CONTROL_HEIGHT, Color.GRAY);
+        background.getStyleClass().add("background-rect");
+        background.setMouseTransparent(true);
+
+        prevLabel = new Label();
+        prevLabel.getStyleClass().add("label");
+        prevLabel.setMouseTransparent(true);
+        userFacingLabel = new Label();
+        userFacingLabel.getStyleClass().add("label");
+        userFacingLabel.getStyleClass().add("user-facing-label");
+        userFacingLabel.setMouseTransparent(true);
+        nextLabel = new Label();
+        nextLabel.getStyleClass().add("label");
+        nextLabel.setMouseTransparent(true);
+        tempLabel = new Label();
+        tempLabel.getStyleClass().add("label");
+        tempLabel.setMouseTransparent(true);
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
+
+        contentBox = new VBox();
+        contentBox.setMouseTransparent(true);
+    }
+
+    private void initializeAnimations() {
+        Duration duration = Duration.millis(200);
+        double offset = 0;
+
+        // Animation for scrolling up
+        TranslateTransition prevTransitionUp = new TranslateTransition(duration, prevLabel);
+        prevTransitionUp.setFromY(prevLabel.getLayoutY());
+        prevTransitionUp.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition userFacingTransitionUp = new TranslateTransition(duration, userFacingLabel);
+        userFacingTransitionUp.setFromY(userFacingLabel.getLayoutY());
+        userFacingTransitionUp.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition nextTransitionUp = new TranslateTransition(duration, nextLabel);
+        nextTransitionUp.setFromY(nextLabel.getLayoutY());
+        nextTransitionUp.setToY(userFacingLabel.getLayoutY());
+
+        TranslateTransition tempTransitionUp = new TranslateTransition(duration, tempLabel);
+        tempTransitionUp.setFromY(nextLabel.getLayoutY() + nextLabel.getHeight());
+        tempTransitionUp.setToY(nextLabel.getLayoutY());
+
+        upAnimation = new ParallelTransition(prevTransitionUp, userFacingTransitionUp, nextTransitionUp, tempTransitionUp);
+
+        // Animation for scrolling down
+        TranslateTransition tempTransitionDown = new TranslateTransition(duration, tempLabel);
+        tempTransitionDown.setFromY(prevLabel.getLayoutY() - prevLabel.getHeight());
+        tempTransitionDown.setToY(prevLabel.getLayoutY());
+
+        TranslateTransition prevTransitionDown = new TranslateTransition(duration, prevLabel);
+        prevTransitionDown.setFromY(prevLabel.getLayoutY());
+        prevTransitionDown.setToY(userFacingLabel.getLayoutY());
+
+        TranslateTransition userFacingTransitionDown = new TranslateTransition(duration, userFacingLabel);
+        userFacingTransitionDown.setFromY(userFacingLabel.getLayoutY());
+        userFacingTransitionDown.setToY(nextLabel.getLayoutY());
+
+        TranslateTransition nextTransitionDown = new TranslateTransition(duration, nextLabel);
+        nextTransitionDown.setFromY(nextLabel.getLayoutY());
+        nextTransitionDown.setToY(nextLabel.getLayoutY());
+
+        downAnimation = new ParallelTransition(prevTransitionDown, userFacingTransitionDown, nextTransitionDown, tempTransitionDown);
     }
 
     private void layoutParts() {
 
-        Arrays.stream(State.values())
-              .map(state -> state.imageView)
-              .forEach(imageView -> {
-                  imageView.setManaged(false);
-                  drawingPane.getChildren().add(imageView);
-              });
+        contentBox.getChildren().addAll(prevLabel, userFacingLabel, nextLabel);
+        contentBox.setAlignment(Pos.CENTER);
+        drawingPane.getChildren().addAll(border, background, contentBox);
 
-        StackPane.setAlignment(editableNode, Pos.CENTER_LEFT);
-        StackPane.setAlignment(readOnlyNode, Pos.CENTER_LEFT);
+        StackPane.setAlignment(border, Pos.CENTER);
+        StackPane.setAlignment(background, Pos.CENTER);
+        StackPane.setAlignment(contentBox, Pos.CENTER);
 
         getChildren().add(drawingPane);
     }
 
-    private void setupAnimations() {
-        int      delta    = 5;
-        Duration duration = Duration.millis(30);
-
-        TranslateTransition moveRight = new TranslateTransition(duration, editableNode);
-        moveRight.setFromX(0.0);
-        moveRight.setByX(delta);
-        moveRight.setAutoReverse(true);
-        moveRight.setCycleCount(2);
-        moveRight.setInterpolator(Interpolator.LINEAR);
-
-        TranslateTransition moveLeft = new TranslateTransition(duration, editableNode);
-        moveLeft.setFromX(0.0);
-        moveLeft.setByX(-delta);
-        moveLeft.setAutoReverse(true);
-        moveLeft.setCycleCount(2);
-        moveLeft.setInterpolator(Interpolator.LINEAR);
-
-        invalidInputAnimation = new SequentialTransition(moveRight, moveLeft);
-        invalidInputAnimation.setCycleCount(3);
-
-        fadeOutValidIconAnimation = new FadeTransition(Duration.millis(500), State.VALID.imageView);
-        fadeOutValidIconAnimation.setDelay(Duration.seconds(1));
-        fadeOutValidIconAnimation.setFromValue(1.0);
-        fadeOutValidIconAnimation.setToValue(0.0);
-    }
-
     private void setupEventHandlers() {
-        editableNode.setOnKeyPressed(event -> {
+        border.setOnScroll(event -> {
+            if( event.getDeltaY() < 0 ){
+                System.out.println("inc");
+                getSkinnable().increase();
+            }else{
+                getSkinnable().decrease();
+            }
+        });
+
+        border.setOnMouseClicked(event -> border.requestFocus());
+        border.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case UP:
+                    System.out.println("inc");
                     getSkinnable().increase();
                     event.consume();
                     break;
@@ -143,33 +167,33 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void setupValueChangedListeners() {
+        getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> {
+            getSkinnable().setAllTexts(newValue.intValue());
+            if (newValue.intValue() > oldValue.intValue()) {
+                upAnimation.play();
+            } else if (newValue.intValue() < oldValue.intValue()) {
+                downAnimation.play();
+            }
+
+        });
+        focused.addListener(((observable, oldValue, newValue) -> {
+            if (newValue){
+                border.setStroke(Color.YELLOW);
+            } else {
+                border.setStroke(Color.BLACK);
+            }
+        }));
     }
 
     private void setupBindings() {
-
-        State.INVALID.imageView.xProperty().bind(editableNode.translateXProperty().add(editableNode.layoutXProperty()).subtract(IMG_OFFSET));
-        State.INVALID.imageView.yProperty().bind(editableNode.translateYProperty().add(editableNode.layoutYProperty()).subtract(IMG_OFFSET));
-        State.VALID.imageView.xProperty().bind(editableNode.layoutXProperty().subtract(IMG_OFFSET));
-        State.VALID.imageView.yProperty().bind(editableNode.layoutYProperty().subtract(IMG_OFFSET));
+        prevLabel.textProperty().bind(getSkinnable().prevTextProperty());
+        userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
+        nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
+        tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
+        focused.bind( border.focusedProperty() );
     }
 
-    private void startFadeOutValidIconTransition() {
-        if (fadeOutValidIconAnimation.getStatus().equals(Animation.Status.RUNNING)) {
-            return;
-        }
-        fadeOutValidIconAnimation.play();
-    }
-
-    private void startInvalidInputAnimation() {
-        if (invalidInputAnimation.getStatus().equals(Animation.Status.RUNNING)) {
-            invalidInputAnimation.stop();
-        }
-        invalidInputAnimation.play();
-    }
-
-    private void loadFonts(String... font){
-        for(String f : font){
-            Font.loadFont(getClass().getResourceAsStream(f), 0);
-        }
+    private void updateUI() {
+        getSkinnable().setAllTexts(getSkinnable().indexProperty().getValue());
     }
 }

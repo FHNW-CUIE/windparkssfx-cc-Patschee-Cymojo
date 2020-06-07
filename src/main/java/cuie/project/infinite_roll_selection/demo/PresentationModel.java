@@ -4,7 +4,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class PresentationModel {
-    private final IntegerProperty selectedIndex =  new SimpleIntegerProperty(0);
+    private final IntegerProperty selectedIndex =  new SimpleIntegerProperty(1);
 
     public int getSelectedIndex() {
         return selectedIndex.get();
