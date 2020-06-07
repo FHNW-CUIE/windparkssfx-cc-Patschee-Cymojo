@@ -1,7 +1,5 @@
 package cuie.project.infinite_roll_selection;
 
-import java.util.ArrayList;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,15 +8,19 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
 
-public class Infinite_roll_selection extends Control {
+import java.util.ArrayList;
+
+public class Infinite_roll_selection_Temp extends Control {
 
     private ArrayList<String> values;
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty index = new SimpleIntegerProperty();
+    private final StringProperty prevText = new SimpleStringProperty();
     private final StringProperty userFacingText = new SimpleStringProperty();
+    private final StringProperty nextText = new SimpleStringProperty();
 
-    public Infinite_roll_selection(ArrayList<String> values) {
+    public Infinite_roll_selection_Temp(ArrayList<String> values) {
         this.values = values;
         initializeSelf();
         addValueChangeListener();
@@ -55,7 +57,25 @@ public class Infinite_roll_selection extends Control {
 
     //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
-        index.addListener((observable, oldValue, newValue) -> setUserFacingText(values.get(newValue.intValue())));
+        index.addListener((observable, oldValue, newValue) -> setAllTexts(newValue.intValue()));
+    }
+
+    private void setAllTexts(int newValue) {
+        //Auswahl anpassen
+        setUserFacingText(values.get(newValue));
+        //prev und next Text anpassen:
+        if (newValue == 0) {
+            setPrevText(values.get(values.size() - 1));
+            setNextText(values.get(newValue + 1));
+        }
+        if (newValue == values.size() - 1) {
+            setPrevText(values.get(newValue - 1));
+            setNextText(values.get(0));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
     }
 
     //todo: Forgiving Format implementieren
@@ -102,6 +122,30 @@ public class Infinite_roll_selection extends Control {
 
     public void setUserFacingText(String userFacingText) {
         this.userFacingText.set(userFacingText);
+    }
+
+    public String getPrevText() {
+        return prevText.get();
+    }
+
+    public StringProperty prevTextProperty() {
+        return prevText;
+    }
+
+    public void setPrevText(String prevText) {
+        this.prevText.set(prevText);
+    }
+
+    public String getNextText() {
+        return nextText.get();
+    }
+
+    public StringProperty nextTextProperty() {
+        return nextText;
+    }
+
+    public void setNextText(String nextText) {
+        this.nextText.set(nextText);
     }
 
 }
