@@ -40,18 +40,7 @@ public class Infinite_roll_selection extends Control {
             newValue = 0;
         }
 
-        //Todo: In Set all text ?
-        if(values.size() > 2 ) {
-            if (newValue + 2 == values.size()) {
-                setTempText(values.get(0));
-            } else if (newValue + 2 > values.size()) {
-                setTempText(values.get(1));
-            } else {
-                setTempText(values.get(newValue));
-            }
-        } else {
-            setTempText(values.get(newValue));
-        }
+        setTempLabelText(newValue,true);
 
         setIndex(newValue);
     }
@@ -63,20 +52,22 @@ public class Infinite_roll_selection extends Control {
             newValue = values.size() - 1;
         }
 
-        if(values.size() > 2 ) {
-            if (newValue - 2 == -1) {
-                setTempText(values.get(values.size()-1));
-            } else if (newValue - 2 < -1) {
-                setTempText(values.get(values.size()-2));
-            } else {
-                setTempText(values.get(newValue));
-            }
-        } else {
-            setTempText(values.get(newValue));
-        }
+        setTempLabelText(newValue, false);
 
         setIndex(newValue);
 
+    }
+
+    private void setTempLabelText(int value, boolean increase){
+        int offset = increase ? 1 : -1;
+        value += offset;
+        if (value > values.size() -1 ){
+            value -= values.size();
+        } else if ( value < 0 ){
+            value += values.size() -1;
+        }
+
+        setTempText(values.get(value));
     }
 
     private void initializeSelf() {

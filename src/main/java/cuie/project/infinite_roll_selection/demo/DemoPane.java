@@ -36,6 +36,7 @@ class DemoPane extends BorderPane {
         values.add("In Betrieb");
         values.add("Ausser Betrieb");
         values.add("Keine Angaben");
+        values.add("geplant");
 
         infiniterollselection = new Infinite_roll_selection(values);
 
