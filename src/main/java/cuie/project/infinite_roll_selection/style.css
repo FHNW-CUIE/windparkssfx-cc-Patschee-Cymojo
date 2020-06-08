@@ -1,7 +1,6 @@
 .infinite-roll-selection {
-    -fx-padding:          10;
     -base-color:          rgb(255, 201, 104);
-    -fx-background-color: rgb(255, 255, 250);
+    -fx-background-color: transparent;
 }
 
 .infinite-roll-selection .border{

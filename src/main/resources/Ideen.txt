@@ -1,5 +1,0 @@
-- Kanton auswahl mit Schweizerkarte
-- Status (in Betrieb, ausser Betrieb) cool machen
-- Gemeinden Auswahl mit Postleitzahl
-- Schiebregler für Power
--

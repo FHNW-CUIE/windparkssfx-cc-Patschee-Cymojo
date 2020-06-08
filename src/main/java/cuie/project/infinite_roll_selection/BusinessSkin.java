@@ -5,36 +5,33 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
-import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
-class BusinessSkin extends SkinBase<Infinite_roll_selection> {
+class BusinessSkin extends SkinBase<InfiniteRollSelection> {
     private static final int BORDER_WIDTH = 2;
     private static final int CONTROL_HEIGHT = 50;
     private static final int CONTROL_WIDTH = 150;
     private static final int ARTBOARD_HEIGHT = CONTROL_HEIGHT + (2*BORDER_WIDTH);
     private static final int ARTBOARD_WIDTH = CONTROL_WIDTH + (2*BORDER_WIDTH);
 
-    private static final double prevPosY = 2*BORDER_WIDTH;
-    private static final double uFPosY = ARTBOARD_HEIGHT/2;
-    private static final double nextPosY = ARTBOARD_HEIGHT - (2*BORDER_WIDTH);
+    private static final double prevPosY = BORDER_WIDTH + (ARTBOARD_HEIGHT / 8);
+    private static final double uFPosY = (CONTROL_HEIGHT/2) + BORDER_WIDTH ;
+    private static final double nextPosY = ARTBOARD_HEIGHT - prevPosY;
+    private static final double tempPosY = 0;
 
     private static final String STYLE_CSS = "style.css";
 
     private final BooleanProperty focused = new SimpleBooleanProperty();
 
-    private StackPane drawingPane;
+    private Pane drawingPane;
     private Pane contentBox;
 
     private Rectangle border;
@@ -49,12 +46,10 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private Animation upAnimation;
     private Animation downAnimation;
-    private Animation upReverse;
-    private Animation downReverse;
 
     private Timeline tl;
 
-    BusinessSkin(Infinite_roll_selection control) {
+    BusinessSkin(InfiniteRollSelection control) {
         super(control);
         initializeSelf();
         initializeParts();
@@ -78,6 +73,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         background = new Rectangle(CONTROL_WIDTH, CONTROL_HEIGHT, Color.GRAY);
         background.getStyleClass().add("background-rect");
+        background.setY(BORDER_WIDTH);
+        background.setX(BORDER_WIDTH);
         background.setMouseTransparent(true);
 
         prevLabel = createCenteredText(ARTBOARD_WIDTH/2, prevPosY, "label");
@@ -93,18 +90,23 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         //nextLabel.getStyleClass().add("label");
         nextLabel.setMouseTransparent(true);
 
-        tempLabel = createCenteredText((ARTBOARD_WIDTH)/2, ARTBOARD_HEIGHT, "label");
+        tempLabel = createCenteredText((ARTBOARD_WIDTH)/2, tempPosY, "label");
         //tempLabel.getStyleClass().add("label");
         tempLabel.setMouseTransparent(true);
+        tempLabel.setVisible(false);
 
 
-        drawingPane = new StackPane();
+        drawingPane = new Pane();
         drawingPane.getStyleClass().add("drawing-pane");
+        drawingPane.setPrefSize(ARTBOARD_WIDTH, ARTBOARD_HEIGHT);
+        drawingPane.setMaxSize(ARTBOARD_WIDTH, ARTBOARD_HEIGHT);
+        drawingPane.setMinSize(ARTBOARD_WIDTH, ARTBOARD_HEIGHT);
 
         contentBox = new Pane();
         contentBox.setMouseTransparent(true);
-        contentBox.setPrefHeight(CONTROL_HEIGHT);
-        contentBox.setPrefWidth(CONTROL_WIDTH);
+        contentBox.setPrefSize(CONTROL_WIDTH, CONTROL_HEIGHT);
+        contentBox.setMaxSize(CONTROL_WIDTH, CONTROL_HEIGHT);
+        contentBox.setMinSize(CONTROL_WIDTH, CONTROL_HEIGHT);
     }
 
     private Text createCenteredText(double cx, double cy, String styleClass) {
@@ -122,8 +124,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void initializeAnimations() {
-        Duration duration = Duration.millis(500);
-//        Duration reverse = Duration.millis(5);
+        Duration duration = Duration.millis(200);
+        Duration shortDuration = Duration.millis(50);
         double offset = 0;
 
         // Animation for scrolling up
@@ -139,10 +141,9 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         ScaleTransition userFacingUpScale = new ScaleTransition(duration, userFacingLabel);
         userFacingUpScale.setFromY(1);
-        // Todo: Scale berechnen
-        userFacingUpScale.setToY(0.6666666666);
+        userFacingUpScale.setToY(0.75);
         userFacingUpScale.setFromX(1);
-        userFacingUpScale.setToX(0.6666666666);
+        userFacingUpScale.setToX(0.75);
 
         TranslateTransition nextUpTrans = new TranslateTransition(duration, nextLabel);
         nextUpTrans.setByY(uFPosY-nextPosY);
@@ -154,8 +155,8 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         nextUpScale.setToX(1.3333333333);
 
         TranslateTransition tempUpTrans = new TranslateTransition(duration, tempLabel);
-        tempUpTrans.setFromY(0);
-        tempUpTrans.setToY(nextPosY -ARTBOARD_HEIGHT);
+        tempUpTrans.setFromY(ARTBOARD_HEIGHT);
+        tempUpTrans.setToY(ARTBOARD_HEIGHT-prevPosY);
 
         ScaleTransition tempUpScale = new ScaleTransition(duration, tempLabel);
         tempUpScale.setFromY(0);
@@ -166,13 +167,12 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         // Animation for scrolling down
         TranslateTransition tempDownTrans = new TranslateTransition(duration, tempLabel);
-        tempDownTrans.setFromY(-CONTROL_HEIGHT);
-        tempDownTrans.setToY(prevPosY - CONTROL_HEIGHT);
+        tempDownTrans.setFromY(-tempPosY);
+        tempDownTrans.setToY(prevPosY-tempPosY);
 
         ScaleTransition tempDownScale = new ScaleTransition(duration, tempLabel);
         tempDownScale.setFromY(0);
         tempDownScale.setToY(1);
-
 
         TranslateTransition prevDownTrans = new TranslateTransition(duration, prevLabel);
         prevDownTrans.setByY(uFPosY-prevPosY);
@@ -188,13 +188,12 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         ScaleTransition userFacingDownScale = new ScaleTransition(duration, userFacingLabel);
         userFacingDownScale.setFromY(1);
-        // Todo: Scale berechnen
-        userFacingDownScale.setToY(0.6666666666);
+        userFacingDownScale.setToY(0.75);
         userFacingDownScale.setFromX(1);
-        userFacingDownScale.setToX(0.6666666666);
+        userFacingDownScale.setToX(0.75);
 
         TranslateTransition nextDownTrans = new TranslateTransition(duration, nextLabel);
-        tempDownTrans.setByY(CONTROL_HEIGHT-nextPosY);
+        nextDownTrans.setByY(ARTBOARD_HEIGHT-nextPosY);
 
         ScaleTransition nextDownScale = new ScaleTransition(duration, nextLabel);
         nextDownScale.setFromY(1);
@@ -203,12 +202,12 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         downAnimation = new ParallelTransition(tempDownTrans, tempDownScale, prevDownTrans, prevDownScale, userFacingDownTrans, userFacingDownScale, nextDownTrans, nextDownScale);
         downAnimation.setOnFinished(event -> resetAnimations());
-//        downReverse = new ParallelTransition();
 
     }
 
     private void resetAnimations(){
         getSkinnable().setAllTexts(newIndex);
+
         prevLabel.setTranslateY(0);
         prevLabel.setScaleX(1);
         prevLabel.setScaleY(1);
@@ -267,27 +266,34 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void setupValueChangedListeners() {
         getSkinnable().indexProperty().addListener((observable, oldValue, newValue) -> {
-            tempLabel.setVisible(true);
-            int tmp = newValue.intValue();
+            newIndex = newValue.intValue();
             int max = getSkinnable().getValues().size() -1;
-            if (tmp == 0){
+            boolean inc = false;
+
+
+            if (newIndex == 0){
                 if (oldValue.intValue() == max){
-                    upAnimation.play();
-                } else {
-                    downAnimation.play();
+                    inc = true;
                 }
-            } else if (tmp == max){
+            } else if (newIndex == max){
                 if (oldValue.intValue() == 0){
-                    downAnimation.play();
+                    inc = false;
                 } else {
-                    upAnimation.play();
+                    inc = true;
                 }
             } else if (newValue.intValue() > oldValue.intValue()) {
-                upAnimation.play();
+                inc = true;
             } else {
+                inc = false;
+            }
+
+            getSkinnable().setTempLabelText(newIndex, inc);
+            tempLabel.setVisible(true);
+            if (inc){
+                upAnimation.play();
+            } else{
                 downAnimation.play();
             }
-            newIndex = newValue.intValue();
         });
         focused.addListener(((observable, oldValue, newValue) -> {
             if (newValue){
@@ -300,7 +306,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void setupBindings() {
         prevLabel.textProperty().bind(getSkinnable().prevTextProperty());
-        userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
+        userFacingLabel.textProperty().bind(getSkinnable().selectedTextProperty());
         nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
         tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
         focused.bind( border.focusedProperty() );
