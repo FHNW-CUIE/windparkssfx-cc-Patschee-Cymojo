@@ -55,7 +55,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
     }
 
     private void initializeParts() {
-        border = new Rectangle(CONTROL_WIDTH+(BORDER_WIDTH*2), CONTROL_HEIGHT+(BORDER_WIDTH*2), Color.BLACK);
+        border = new Rectangle(CONTROL_WIDTH + (BORDER_WIDTH * 2), CONTROL_HEIGHT + (BORDER_WIDTH * 2), Color.BLACK);
         border.getStyleClass().add("border");
 
 
@@ -142,10 +142,9 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
     private void setupEventHandlers() {
         border.setOnScroll(event -> {
-            if( event.getDeltaY() < 0 ){
-                System.out.println("inc");
+            if (event.getDeltaY() < 0) {
                 getSkinnable().increase();
-            }else{
+            } else {
                 getSkinnable().decrease();
             }
         });
@@ -154,7 +153,6 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         border.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case UP:
-                    System.out.println("inc");
                     getSkinnable().increase();
                     event.consume();
                     break;
@@ -177,7 +175,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
 
         });
         focused.addListener(((observable, oldValue, newValue) -> {
-            if (newValue){
+            if (newValue) {
                 border.setStroke(Color.YELLOW);
             } else {
                 border.setStroke(Color.BLACK);
@@ -190,7 +188,7 @@ class BusinessSkin extends SkinBase<Infinite_roll_selection> {
         userFacingLabel.textProperty().bind(getSkinnable().userFacingTextProperty());
         nextLabel.textProperty().bind(getSkinnable().nextTextProperty());
         tempLabel.textProperty().bind(getSkinnable().tempTextProperty());
-        focused.bind( border.focusedProperty() );
+        focused.bind(border.focusedProperty());
     }
 
     private void updateUI() {

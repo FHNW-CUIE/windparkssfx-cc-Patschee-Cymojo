@@ -21,7 +21,6 @@ public class Infinite_roll_selection extends Control {
     private final StringProperty tempText = new SimpleStringProperty();
 
 
-
     public Infinite_roll_selection(ArrayList<String> values) {
         this.values = values;
         initializeSelf();
@@ -41,7 +40,7 @@ public class Infinite_roll_selection extends Control {
         }
 
         //Todo: In Set all text ?
-        if(values.size() > 2 ) {
+        if (values.size() > 2) {
             if (newValue + 2 == values.size()) {
                 setTempText(values.get(0));
             } else if (newValue + 2 > values.size()) {
@@ -63,11 +62,11 @@ public class Infinite_roll_selection extends Control {
             newValue = values.size() - 1;
         }
 
-        if(values.size() > 2 ) {
+        if (values.size() > 2) {
             if (newValue - 2 == -1) {
-                setTempText(values.get(values.size()-1));
+                setTempText(values.get(values.size() - 1));
             } else if (newValue - 2 < -1) {
-                setTempText(values.get(values.size()-2));
+                setTempText(values.get(values.size() - 2));
             } else {
                 setTempText(values.get(newValue));
             }
@@ -181,7 +180,7 @@ public class Infinite_roll_selection extends Control {
     public void setTempText(String tempText) {
         this.tempText.set(tempText);
     }
-  
+
     public ArrayList<String> getValues() {
         return values;
     }
