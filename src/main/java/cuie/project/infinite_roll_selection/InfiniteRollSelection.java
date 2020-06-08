@@ -10,18 +10,27 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
-public class Infinite_roll_selection extends Control {
+public class InfiniteRollSelection extends Control {
 
     private ArrayList<String> values;
 
     private final IntegerProperty index = new SimpleIntegerProperty();
     private final StringProperty prevText = new SimpleStringProperty();
-    private final StringProperty userFacingText = new SimpleStringProperty();
+    private final StringProperty selectedText = new SimpleStringProperty();
     private final StringProperty nextText = new SimpleStringProperty();
     private final StringProperty tempText = new SimpleStringProperty();
 
+    public InfiniteRollSelection(){
+        values = new ArrayList<>();
+        values.add("Im Umbau");
+        values.add("In Betrieb");
+        values.add("Ausser Betrieb");
+        values.add("Keine Angaben");
+        initializeSelf();
+        addValueChangeListener();
+    }
 
-    public Infinite_roll_selection(ArrayList<String> values) {
+    public InfiniteRollSelection(ArrayList<String> values) {
         this.values = values;
         initializeSelf();
         addValueChangeListener();
@@ -35,21 +44,10 @@ public class Infinite_roll_selection extends Control {
     public void increase() {
         int newValue = getIndex() + 1;
 
+        setTempLabelText(newValue,true);
+
         if (newValue >= values.size()) {
             newValue = 0;
-        }
-
-        //Todo: In Set all text ?
-        if (values.size() > 2) {
-            if (newValue + 2 == values.size()) {
-                setTempText(values.get(0));
-            } else if (newValue + 2 > values.size()) {
-                setTempText(values.get(1));
-            } else {
-                setTempText(values.get(newValue));
-            }
-        } else {
-            setTempText(values.get(newValue));
         }
 
         setIndex(newValue);
@@ -58,24 +56,26 @@ public class Infinite_roll_selection extends Control {
     public void decrease() {
         int newValue = getIndex() - 1;
 
+        setTempLabelText(newValue, false);
+
         if (newValue < 0) {
             newValue = values.size() - 1;
         }
 
-        if (values.size() > 2) {
-            if (newValue - 2 == -1) {
-                setTempText(values.get(values.size() - 1));
-            } else if (newValue - 2 < -1) {
-                setTempText(values.get(values.size() - 2));
-            } else {
-                setTempText(values.get(newValue));
-            }
-        } else {
-            setTempText(values.get(newValue));
-        }
-
         setIndex(newValue);
 
+    }
+
+    public void setTempLabelText(int value, boolean increase){
+        int offset = increase ? 1 : -1;
+        value += offset;
+        if (value > values.size() -1 ){
+            value -= values.size();
+        } else if ( value < 0 ){
+            value += values.size();
+        }
+
+        setTempText(values.get(value));
     }
 
     private void initializeSelf() {
@@ -87,7 +87,8 @@ public class Infinite_roll_selection extends Control {
 
     public void setAllTexts(int newValue) {
         //Auswahl anpassen
-        setUserFacingText(values.get(newValue));
+        setSelectedText(values.get(newValue));
+        setTempLabelText(newValue, true);
         //prev und next Text anpassen:
         if (newValue == 0) {
             setPrevText(values.get(values.size() - 1));
@@ -133,16 +134,16 @@ public class Infinite_roll_selection extends Control {
         this.index.set(index);
     }
 
-    public String getUserFacingText() {
-        return userFacingText.get();
+    public String getSelectedText() {
+        return selectedText.get();
     }
 
-    public StringProperty userFacingTextProperty() {
-        return userFacingText;
+    public StringProperty selectedTextProperty() {
+        return selectedText;
     }
 
-    public void setUserFacingText(String userFacingText) {
-        this.userFacingText.set(userFacingText);
+    public void setSelectedText(String selectedText) {
+        this.selectedText.set(selectedText);
     }
 
     public String getPrevText() {

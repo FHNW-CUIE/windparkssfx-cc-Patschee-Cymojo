@@ -6,12 +6,12 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import cuie.project.infinite_roll_selection.Infinite_roll_selection;
+import cuie.project.infinite_roll_selection.InfiniteRollSelection;
 
 import java.util.ArrayList;
 
 class DemoPane extends BorderPane {
-    private Infinite_roll_selection infiniterollselection;
+    private InfiniteRollSelection infiniterollselection;
 
     private Slider indexSlider;
     private Label indexLabel;
@@ -36,8 +36,9 @@ class DemoPane extends BorderPane {
         values.add("In Betrieb");
         values.add("Ausser Betrieb");
         values.add("Keine Angaben");
+        values.add("geplant");
 
-        infiniterollselection = new Infinite_roll_selection(values);
+        infiniterollselection = new InfiniteRollSelection(values);
 
 
         indexSlider = new Slider(0, values.size()-1, 0);
