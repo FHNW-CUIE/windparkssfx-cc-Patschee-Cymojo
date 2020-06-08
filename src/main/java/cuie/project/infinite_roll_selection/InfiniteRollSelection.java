@@ -26,7 +26,6 @@ public class InfiniteRollSelection extends Control {
         values.add("In Betrieb");
         values.add("Ausser Betrieb");
         values.add("Keine Angaben");
-        values.add("geplant");
         initializeSelf();
         addValueChangeListener();
     }
